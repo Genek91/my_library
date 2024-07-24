@@ -5,10 +5,16 @@ LIBRARY_FILE = 'my_library.json'
 
 
 class Book:
+    """
+    Класс представляющий книгу в библиотеке
+    """
 
     def __init__(
             self, id: int, title: str, author: str, year: str, status: str
     ) -> None:
+        """
+        Инициализирует объект книги
+        """
         self.id = id
         self.title = title
         self.author = author
@@ -16,6 +22,9 @@ class Book:
         self.status = status
 
     def to_dict(self) -> dict:
+        """
+        Преобразует объект книги в словарь
+        """
         return {
             'id': self.id,
             'title': self.title,
@@ -26,6 +35,10 @@ class Book:
 
 
 def load_library() -> list:
+    """
+    Загрузка библиотеки из json-файла,
+    если файл ещё не создан возвращает пустой список
+    """
     if not os.path.exists(LIBRARY_FILE):
         return []
     with open(LIBRARY_FILE, 'r') as file:
@@ -33,11 +46,15 @@ def load_library() -> list:
 
 
 def save_library(library: list[Book]) -> None:
+    """Сохранение библиотеки в json-файл"""
     with open(LIBRARY_FILE, 'w') as file:
         json.dump([book.to_dict() for book in library], file)
 
 
 def add_book(library: list[Book], title: str, author: str, year: str) -> None:
+    """
+    Добавление книги в библиотеку
+    """
     id = max([book.id for book in library], default=0) + 1
     new_book = Book(id, title, author, year, status='в наличии')
     library.append(new_book)
@@ -46,6 +63,7 @@ def add_book(library: list[Book], title: str, author: str, year: str) -> None:
 
 
 def remove_book(library: list[Book], id: int) -> None:
+    """Удаление книги из библиотеки по её id"""
     book = [book for book in library if book.id == id]
     if book:
         library.remove(*book)
@@ -56,6 +74,7 @@ def remove_book(library: list[Book], id: int) -> None:
 
 
 def search_book(library: list[Book], query: str) -> None:
+    """Поиск книги по title, author или year"""
     results = [
         book for book in library if query in (
             book.title, book.author, book.year
@@ -68,6 +87,7 @@ def search_book(library: list[Book], query: str) -> None:
 
 
 def get_all_books(library: list[Book]) -> None:
+    """Получение списка всех книг из библиотеки"""
     results = [book for book in library]
     if results:
         repr_results(results)
@@ -76,6 +96,10 @@ def get_all_books(library: list[Book]) -> None:
 
 
 def change_status(library: list[Book], id: int, new_status: str) -> None:
+    """
+    Изменение статуса книги,
+    допустимые варианты статуса: 'в наличии' или 'выдана'
+    """
     book = [book for book in library if book.id == id]
     if book and new_status in ('в наличии', 'выдана'):
         book[0].status = new_status
@@ -88,10 +112,12 @@ def change_status(library: list[Book], id: int, new_status: str) -> None:
 
 
 def not_found_book() -> None:
+    """Выводит сообщение о том, что книга не найдена"""
     print('-> Книга не найдена')
 
 
 def repr_results(results: list[Book]) -> None:
+    """Последовательно выводит описание книги"""
     for book in results:
         print(
             f'ID: {book.id}, '
@@ -103,6 +129,10 @@ def repr_results(results: list[Book]) -> None:
 
 
 def main() -> None:
+    """
+    Основная функция.
+    Обрабатывает ввод пользователя и выполняет соответствующие действия.
+    """
     library = load_library()
     while True:
         print(
